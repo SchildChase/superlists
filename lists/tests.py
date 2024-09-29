@@ -22,20 +22,13 @@ class HomePageTest(TestCase):
     def test_redirects_after_POST(self):
         responses = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(responses.status_code, 302)
-        self.assertEqual(responses['location'], '/')
+        self.assertEqual(responses['location'], '/lists/the_only_list_in_world/')
 
     def test_only_saves_items_when_necessary(self):
         self.client.get("/")
         self.assertEqual(Item.objects.count(), 0)
 
-    def test_display_all_list_items(self):
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
 
-        responses = self.client.get('/')
-
-        self.assertIn("itemey 1", responses.content.decode())
-        self.assertIn("itemey 2", responses.content.decode())
 
 
 class ItemModelTest(TestCase):
@@ -56,3 +49,20 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first(ever) list item')
         self.assertEqual(second_saved_item.text, 'item the second')
+
+class ListViewTest(TestCase):
+
+    def test_uses_list_template(self):
+        responses = self.client.get('/lists/the_only_list_in_world/')
+        self.assertTemplateUsed(responses,'list.html')
+
+    def test_display_all_list_items(self):
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+
+        responses = self.client.get('/lists/the_only_list_in_world/')
+
+        self.assertContains(responses, 'itemey 1')
+        self.assertContains(responses, 'itemey 2')
+
+

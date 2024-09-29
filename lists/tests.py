@@ -10,27 +10,6 @@ class HomePageTest(TestCase):
         responses = self.client.get("/")
         self.assertTemplateUsed(responses, 'home.html')
 
-    def test_can_save_a_POST_request(self):
-        responses = self.client.post('/', data={'item_text': 'A new list item'})
-
-        self.assertEqual(Item.objects.count(), 1)
-        new_item = Item.objects.first()
-        self.assertEqual(new_item.text, 'A new list item')
-        # self.assertIn('A new list item', responses.content.decode())
-        # self.assertTemplateUsed(responses, 'home.html')
-
-    def test_redirects_after_POST(self):
-        responses = self.client.post('/', data={'item_text': 'A new list item'})
-        self.assertEqual(responses.status_code, 302)
-        self.assertEqual(responses['location'], '/lists/the_only_list_in_world/')
-
-    def test_only_saves_items_when_necessary(self):
-        self.client.get("/")
-        self.assertEqual(Item.objects.count(), 0)
-
-
-
-
 class ItemModelTest(TestCase):
 
     def test_saving_an_retrieving_items(self):
@@ -65,4 +44,18 @@ class ListViewTest(TestCase):
         self.assertContains(responses, 'itemey 1')
         self.assertContains(responses, 'itemey 2')
 
+
+class NewListTest(TestCase):
+    #关于'/'的说明：在不修改数据库的“操作”后面加斜线
+    def test_can_save_a_POST_request(self):
+        responses = self.client.post('/lists/new', data={'item_text': 'A new list item'})
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text, 'A new list item')
+
+    def test_redirects_after_POST(self):
+        responses = self.client.post('/lists/new', data={'item_text': 'A new list item'})
+        self.assertRedirects(responses,'/lists/the_only_list_in_world/')
+        #self.assertEqual(responses.status_code, 302)
+        #self.assertEqual(responses['location'], '/lists/the_only_list_in_world/')
 

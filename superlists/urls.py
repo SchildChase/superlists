@@ -18,9 +18,11 @@ Including another URLconf
 #from django.conf.urls import url
 from django.urls import path, re_path
 from lists import views
+from lists.views import view_list
 
 urlpatterns = [
     path('', views.home_page, name='home'),
+    re_path(r'lists/new$',views.new_list,name='new_list'),
     re_path(r'^lists/the_only_list_in_world/$',views.view_list,name='view_list'),
     #path('admin/', admin.site.urls),
 ]

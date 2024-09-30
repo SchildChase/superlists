@@ -27,6 +27,28 @@ class NewVisitorTest(LiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
+    def test_layout_and_styling(self):
+        #eva访问首页
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1280,960)
+        #看到输入框居中显示
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x']+inputbox.size['width']/2,
+            640,
+            delta=10
+        )
+
+        #他创建了一个清单，看到输入框任然是完美居中
+        inputbox.send_keys('testing')
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1:testing')
+        inputbox = self.browser.find_element(By.ID, 'id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            640,
+            delta=10
+        )
 
     def test_can_start_a_list_for_one_user(self):
         # eva 听说有个在线办事应用
@@ -62,7 +84,7 @@ class NewVisitorTest(LiveServerTestCase):
         input_box = self.browser.find_element(By.ID,'id_new_item')
         input_box.send_keys('Use peacock feathers')
         input_box.send_keys(Keys.ENTER)
-        time.sleep(1)
+        #time.sleep(1)
 
         #页面再次更新，他的清单中显示了这两个待办事项
         self.wait_for_row_in_list_table('1:Buy peacock')

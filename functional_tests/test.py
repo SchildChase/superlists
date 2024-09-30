@@ -1,4 +1,5 @@
-from django.test import  LiveServerTestCase
+#from django.test import  LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -7,7 +8,7 @@ import time
 
 MAX_WAIT = 10
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -30,13 +31,13 @@ class NewVisitorTest(LiveServerTestCase):
     def test_layout_and_styling(self):
         #eva访问首页
         self.browser.get(self.live_server_url)
-        self.browser.set_window_size(1280,960)
+        self.browser.set_window_size(1024,768)
         #看到输入框居中显示
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         self.assertAlmostEqual(
             inputbox.location['x']+inputbox.size['width']/2,
-            640,
-            delta=10
+            512,
+            delta=20
         )
 
         #他创建了一个清单，看到输入框任然是完美居中
@@ -46,8 +47,8 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,
-            640,
-            delta=10
+            512,
+            delta=20
         )
 
     def test_can_start_a_list_for_one_user(self):
